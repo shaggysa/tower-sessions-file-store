@@ -5,16 +5,18 @@
 //! 
 //! ## Example:
 //! ```
-//!     let session_store = tower_sessions_file_store::FileStore::new("/path/to/sessions/directory", "prefix-", ".json");
-//!     let session_layer = tower_sessions::SessionManagerLayer::new(session_store)
+//! fn main() {
+//! let session_store = tower_sessions_file_based_store::FileStore::new("/path/to/sessions/directory", "prefix-", ".json");
+//! let session_layer = tower_sessions::SessionManagerLayer::new(session_store)
 //!         .with_secure(false)
-//!         .with_expiry(tower_sessions::Expiry::OnInactivity(Duration::seconds(15)))
+//!         .with_expiry(tower_sessions::Expiry::OnInactivity(tower_sessions::cookie::time::Duration::seconds(15)))
 //!         ;
-//!     Router::new()
-//!         .route("/sess_test", get(handle_sess_test));
+//!     axum::Router::<()>::new()
+//!         .route("/sess_test", axum::routing::get(handle_sess_test))
 //!         .layer(session_layer)
 //!         ;
-//!     
+//! }
+//!
 //!     /* ... Elsewhere ... */
 //!     async fn handle_sess_test(sess: tower_sessions::Session) -> impl axum::response::IntoResponse {
 //!         let counter: u32 = sess.get("count").await.unwrap().unwrap_or(0u32);
@@ -24,7 +26,7 @@
 //!     
 //! ```
 
-use axum::async_trait;
+use async_trait::async_trait;
 use std::fs;
 use tower_sessions::{
     self,
@@ -40,7 +42,7 @@ use tower_sessions::{
 /// 
 /// For example, if you were to use:
 /// ```
-///     FileStore::new("/path/to/sesssions/directory", "prefix-", ".json")
+///     tower_sessions_file_based_store::FileStore::new("/path/to/sesssions/directory", "prefix-", ".json");
 /// ```
 /// to instantiate a new `FileStore` struct, then you would end up with files such as:
 /// 

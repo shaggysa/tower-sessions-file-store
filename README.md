@@ -10,8 +10,8 @@
         .with_secure(false)
         .with_expiry(tower_sessions::Expiry::OnInactivity(Duration::seconds(15)))
         ;
-    Router::new()
-        .route("/sess_test", get(handle_sess_test));
+    Router::<()>::new()
+        .route("/sess_test", get(handle_sess_test))
         .layer(session_layer)
         ;
     
