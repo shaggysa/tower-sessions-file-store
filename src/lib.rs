@@ -1,8 +1,8 @@
 //! # tower-sessions-file-store
-//! 
+//!
 //! `tower-sessions-file-store` is a simple and minimalistic file store backing provider for
 //! `tower-sessions`.  Usage is extremely simple;
-//! 
+//!
 //! ## Example:
 //! ```
 //! fn main() {
@@ -31,28 +31,25 @@ use std::fs;
 use tower_sessions::{
     self,
     session::{Id, Record},
-    session_store::{
-        self,
-        Error::Decode,
-    },
+    session_store::{self, Error::Decode},
 };
 
 /// Creates a FileStore struct and stores its configuration.  Specifying the `dir`, `prefix`, and
 /// `extension` fields will define how session.
-/// 
+///
 /// For example, if you were to use:
 /// ```
 ///     tower_sessions_file_based_store::FileStore::new("/path/to/sesssions/directory", "prefix-", ".json");
 /// ```
 /// to instantiate a new `FileStore` struct, then you would end up with files such as:
-/// 
+///
 /// ```bash
 ///     /path/to/sesssions/directory/prefix-CI4afkzk6tVMRb50lMyZAA.json
 ///     /path/to/sesssions/directory/prefix-Hs8Jb0_zAGrc_rmUYGwlvw.json
 ///     /path/to/sesssions/directory/prefix-swJdTjvk1os8zAhhc6AVMQ.json
 /// ```
-/// 
-/// 
+///
+///
 #[derive(Clone, Debug, Default)]
 pub struct FileStore {
     /// Directory to use for session storage.  Omit any trailing slashes or path separators.
@@ -112,13 +109,13 @@ impl session_store::SessionStore for FileStore {
         self.save(record)
     }
     async fn load(&self, session_id: &Id) -> session_store::Result<Option<Record>> {
-        let data: String = fs::read_to_string(self.path(session_id)).map_err(|e| Decode(e.to_string()))?;
-        let record: Record = serde_json::from_str(data.as_str()).map_err(|e| Decode(e.to_string()))?;
+        let data: String =
+            fs::read_to_string(self.path(session_id)).map_err(|e| Decode(e.to_string()))?;
+        let record: Record =
+            serde_json::from_str(data.as_str()).map_err(|e| Decode(e.to_string()))?;
         Ok(Some(record))
     }
     async fn delete(&self, session_id: &Id) -> session_store::Result<()> {
         fs::remove_file(self.path(session_id)).map_err(|e| Decode(e.to_string()))
     }
 }
-
-
